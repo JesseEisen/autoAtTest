@@ -1,0 +1,62 @@
+<html>
+<head> 
+    <title> Report index </title>   
+    <style>
+        body{
+            background:rgb(234, 234, 234);
+        }
+
+        .container {
+            margin: 0 auto;
+            width: 80%;
+            padding-top: 100px;
+        }
+
+        ul {
+            list-style: none;
+            margin-block-start: 1em;
+            margin-block-end: 1em;
+            margin-inline-start: 0px;
+            margin-inline-end: 0px;
+            padding-inline-start: 40px;
+        }
+        li {
+            font-size: 14px;
+            line-height: 24px;
+            margin-bottom: 10px;
+        }
+
+        li::before{
+            content: "-";
+            display: inline-block;
+            color: rgb(153, 153, 153);
+            position: absolute;
+            margin-left: -15px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #333333; 
+        }
+
+        a:hover{
+            color: #000000;
+            font-weight: bold;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <ul>
+        {{range $file := .}}
+        <li>    
+            {{ $herf := (printf "/report/%v" $file) }}
+            <a href={{$herf}} > {{$file}} </a>
+        </li>
+        {{end}}
+    </ul>
+</div>
+</body>
+</html>

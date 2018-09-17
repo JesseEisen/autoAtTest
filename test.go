@@ -2,8 +2,10 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -26,6 +28,7 @@ var (
 	commands []string
 	hreports []Hreport
 	filename string
+	bserver  bool
 	f        *os.File
 )
 
@@ -230,8 +233,25 @@ func compare(exp, res []string) bool {
 	return true
 }
 
+func serveIndex(w http.ResponseWriter, r *http.Request) {
+	files, err := ioutil.ReadDir("./report")
+	if err != nil {
+		fmt.Println("read dir error ", err)
+	}
+
+	fileSlice := make([]string, 0, len(files))
+	for _, file := range files {
+		fileSlice = append(fileSlice, file.Name())
+	}
+	t, _ := template.ParseFiles("index.html")
+
+	t.Execute(w, fileSlice)
+}
+
 func RunServer() {
-	http.Handle("/", http.FileServer(http.Dir("./report")))
+	fs := http.FileServer(http.Dir("report"))
+	http.Handle("/report/", http.StripPrefix("/report/", fs))
+	http.HandleFunc("/", serveIndex)
 	error := http.ListenAndServe(":9000", nil)
 	if error != nil {
 		panic(error)
@@ -239,13 +259,19 @@ func RunServer() {
 }
 
 func main() {
+	flag.BoolVar(&bserver, "server", false, "option for view report by server")
+	flag.Parse()
 	ReadCase()
 	fmt.Printf("== Start Test ==\n")
 	RunCase()
 	fmt.Printf("\n== Start Generate Report... == \n")
 	Report()
-	fmt.Println("Please visit localhost:9000 see reports")
-	RunServer()
+	if bserver {
+		fmt.Println("Please visit localhost:9000 see reports")
+		RunServer()
+	} else {
+		fmt.Printf("Report generated, check %s for more detail\n", filename)
+	}
 
 	in := bufio.NewReader(os.Stdin)
 	c, _ := in.ReadByte()
