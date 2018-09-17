@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"text/template"
@@ -22,6 +24,8 @@ var (
 	cases    map[string][]string
 	result   map[string][]string
 	commands []string
+	hreports []Hreport
+	filename string
 	f        *os.File
 )
 
@@ -156,7 +160,7 @@ func cleanRes(buf []byte) []string {
 func Report() {
 
 	var i int
-	hreports := make([]Hreport, len(commands))
+	hreports = make([]Hreport, len(commands))
 
 	for _, cmd := range commands {
 		expect := cases[cmd]
@@ -178,11 +182,23 @@ func Report() {
 		i++
 	}
 
-	if checkFileIsExist("Result.html") {
-		f, _ = os.OpenFile("Result.html", os.O_TRUNC|os.O_RDWR, 0666)
-	} else {
-		f, _ = os.Create("Result.html")
+	savefile()
+}
+
+func currentTime() string {
+	t := time.Now()
+	return fmt.Sprintf("%d-%02d-%02d-%02d-%02d-%02d",
+		t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second())
+}
+
+func savefile() {
+	date := currentTime()
+	filename, _ = filepath.Abs("./report/result_" + date + ".html")
+	f, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE, 0755)
+	if err != nil {
+		fmt.Println("open file error", err)
 	}
+	defer f.Close()
 
 	t, _ := template.ParseFiles("report.html")
 	t.Execute(f, hreports)
@@ -214,13 +230,22 @@ func compare(exp, res []string) bool {
 	return true
 }
 
+func RunServer() {
+	http.Handle("/", http.FileServer(http.Dir("./report")))
+	error := http.ListenAndServe(":9000", nil)
+	if error != nil {
+		panic(error)
+	}
+}
+
 func main() {
 	ReadCase()
 	fmt.Printf("== Start Test ==\n")
 	RunCase()
 	fmt.Printf("\n== Start Generate Report... == \n")
 	Report()
-	fmt.Printf("== Report Generated! See Result.html\n")
+	fmt.Println("Please visit localhost:9000 see reports")
+	RunServer()
 
 	in := bufio.NewReader(os.Stdin)
 	c, _ := in.ReadByte()
