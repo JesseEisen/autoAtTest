@@ -104,6 +104,8 @@ func RunCase() {
 		MinimumReadSize: 2,
 	}
 
+	var commandTemp string
+
 	// Open the port.
 	port, err := serial.Open(options)
 	if err != nil {
@@ -116,10 +118,10 @@ func RunCase() {
 	for command := range cases {
 		index := strings.IndexByte(command, '#')
 		if index != -1 {
-			command = command[:index]
+			commandTemp = command[:index]
 		}
-		fmt.Printf("Run %s...\n", command)
-		runCommand(port, command+"\r")
+		fmt.Printf("Run %s...\n", commandTemp)
+		runCommand(port, commandTemp+"\r", command)
 		if delay == 0 {
 			delay = 3
 		}
@@ -127,7 +129,7 @@ func RunCase() {
 	}
 }
 
-func runCommand(s io.ReadWriteCloser, command string) {
+func runCommand(s io.ReadWriteCloser, command, rawcmd string) {
 	_, err := s.Write([]byte(command))
 	if err != nil {
 		fmt.Printf("%s run error", command)
@@ -141,11 +143,8 @@ func runCommand(s io.ReadWriteCloser, command string) {
 
 	//fmt.Printf("Read: %+q", buf[:n])
 	res := cleanRes(buf[:n])
-	command = strings.TrimRight(command, "\r")
-	if _, ok := result[command]; ok {
-		command = command + "#rep"
-	}
-	result[command] = res
+
+	result[rawcmd] = res
 	//fmt.Printf("command: %+q \t res: %+q\n", command, res)
 }
 

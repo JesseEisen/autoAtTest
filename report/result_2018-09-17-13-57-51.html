@@ -1,0 +1,102 @@
+<html>
+<head>
+<title> AT AUTOTEST REPORT </title>
+<style>
+    body{
+        background:rgb(234, 234, 234);
+    }
+
+    h1 {
+        font-weight: 400;
+        font-size: 32px;
+        line-height: 42px;
+        text-align: center;
+        padding-top: 50px;
+        padding-bottom: 50px;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    .table{
+        padding-top: 100px;
+        width: 80%;
+        margin:0 auto;
+        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        border-collapse:collapse;
+        border:none;
+    }
+
+    .table>thead>tr>th {
+        color: rgb(0, 0, 0);
+        font-size: 18px;
+        font-weight: 400;
+        letter-spacing: 0px;
+        text-transform: uppercase;
+        text-align: left;
+        vertical-align: top;
+        padding: 10px 17px;
+        background: rgb(234, 234, 234);
+        border-bottom: 1px solid #dddbdb;
+        border-top: 1px solid rgb(234, 234, 234);
+    }
+
+    .table>tbody>tr>td {
+        font-size: 16px;
+        text-align: left;
+        vertical-align: top;
+        padding: 12px 17px;
+        border-bottom: 1px solid #dddbdb;
+    }
+</style>
+</head>
+<body>
+    <h1> AT Test Report </h1>
+<div class="container">
+<table class="table">
+<thead>
+<tr>
+    <th>Command</th>
+    <th>Result</th>
+    <th>Expect</th>
+    <th>Actual</th>
+</tr>
+</thead>
+<tbody>
+    
+    <tr>
+        <td style="color:#333333">ATI</td>
+        
+        <td style="color:#0076FF">PASS</td>
+        <td style="color:#333333">[ Quectel,  EC20F,  Revision: EC20CEFAGR06A05M4G,  OK ]</td>
+        <td style="color:#333333">[ Quectel, EC20F, Revision: EC20CEFAGR06A05M4G, OK ]</td>
+        
+        
+    </tr>
+    
+    <tr>
+        <td style="color:#333333">AT+GMI</td>
+        
+        <td style="color:#FF0080">FAIL</td>
+        <td style="color:#FF0080">[ Simplight,  OK ]</td>
+        <td style="color:#FF0080">[ Quectel, OK ]</td>
+        
+        
+    </tr>
+    
+    <tr>
+        <td style="color:#333333">AT+GMI</td>
+        
+        <td style="color:#0076FF">PASS</td>
+        <td style="color:#333333">[ Quectel,  OK ]</td>
+        <td style="color:#333333">[ Quectel, OK ]</td>
+        
+        
+    </tr>
+    
+</tbody>
+</table>
+</div>
+</body>
+</html>
